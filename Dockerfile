@@ -34,6 +34,7 @@ WORKDIR /app
 # Copy the built files and server
 COPY --from=builder /app/dist ./dist
 COPY deno.json ./
+COPY deno.lock ./
 COPY server ./server
 
 # Compile the Deno application
