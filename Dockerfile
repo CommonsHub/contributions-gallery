@@ -13,7 +13,18 @@ RUN npm install
 COPY . .
 
 # Build the application
-RUN npm run build
+ARG VITE_PRIMARY_COLOR
+ARG VITE_DISCORD_CHANNEL_ID
+ARG VITE_REFETCH_INTERVAL
+
+# Build with environment variables passed directly to the build command
+RUN VITE_PRIMARY_COLOR=${VITE_PRIMARY_COLOR} \
+  VITE_DISCORD_CHANNEL_ID=${VITE_DISCORD_CHANNEL_ID} \
+  VITE_REFETCH_INTERVAL=${VITE_REFETCH_INTERVAL} \
+  npm run build
+
+# Runtime environment variable
+ENV DISCORD_BOT_TOKEN=""
 
 # Production stage
 FROM denoland/deno:latest
