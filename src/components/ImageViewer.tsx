@@ -17,10 +17,9 @@ const ImageViewer: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [touchStart, setTouchStart] = useState<number | null>(null);
-  const [isTransitioning, setIsTransitioning] = useState(false);
+  const imageReelRef = useRef<HTMLDivElement>(null);
 
   const queryClient = useQueryClient();
-  const imageReelRef = useRef<HTMLDivElement>(null);
 
   const {
     data: posts,
@@ -74,17 +73,14 @@ const ImageViewer: React.FC = () => {
     let interval: NodeJS.Timeout;
     if (isAutoPlaying && posts && posts.length > 0) {
       interval = setInterval(() => {
-        setIsTransitioning(true);
         setCurrentIndex((prev) => {
           const nextIndex = prev + 1;
-          // If we're at the end, scroll the reel back to the start
           if (nextIndex >= posts.length) {
             imageReelRef.current?.scrollTo({ left: 0, behavior: "smooth" });
             return 0;
           }
           return nextIndex;
         });
-        setTimeout(() => setIsTransitioning(false), 300);
       }, 5000);
     }
     return () => clearInterval(interval);
@@ -107,19 +103,15 @@ const ImageViewer: React.FC = () => {
   }, [currentIndex, posts]);
 
   const handlePrevious = () => {
-    if (!posts || isTransitioning) return;
+    if (!posts) return;
     setIsAutoPlaying(false);
-    setIsTransitioning(true);
     setCurrentIndex((prev) => (prev - 1 + posts.length) % posts.length);
-    setTimeout(() => setIsTransitioning(false), 300);
   };
 
   const handleNext = () => {
-    if (!posts || isTransitioning) return;
+    if (!posts) return;
     setIsAutoPlaying(false);
-    setIsTransitioning(true);
     setCurrentIndex((prev) => (prev + 1) % posts.length);
-    setTimeout(() => setIsTransitioning(false), 300);
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -226,13 +218,7 @@ const ImageViewer: React.FC = () => {
       </div>
 
       <div className="absolute inset-0 content-center">
-        <div
-          className={`transition-all duration-300 ease-in-out ${
-            isTransitioning ? "opacity-0 scale-95" : "opacity-100 scale-100"
-          }`}
-        >
-          {renderImageMosaic(posts[currentIndex].attachments)}
-        </div>
+        {renderImageMosaic(posts[currentIndex].attachments)}
       </div>
 
       <button
