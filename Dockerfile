@@ -31,6 +31,8 @@ FROM denoland/deno:2.1.10
 
 WORKDIR /app
 
+RUN deno --version
+
 # Copy the built files and server
 COPY --from=builder /app/dist ./dist
 COPY deno.json ./
