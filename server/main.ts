@@ -7,6 +7,8 @@ const app = new Application();
 app.use(async (ctx, next) => {
   try {
     const path = ctx.request.url.pathname;
+    const queryString = ctx.request.url.search || "";
+    console.log(`GET ${path}${queryString}`);
     if (path.startsWith("/api")) {
       await next();
       return;
@@ -56,10 +58,11 @@ app.use(async (ctx) => {
     const messages = await getMessagesFromChannel(channelId, type, since);
 
     ctx.response.body = messages;
+    console.log(`Response: ${messages.length} messages`);
     ctx.response.headers.set("Content-Type", "application/json");
   }
 });
 
-const port = parseInt(Deno.env.get("PORT") || "8000");
+const port = parseInt(Deno.env.get("PORT") || "3003");
 console.log(`Server running on port ${port}`);
 await app.listen({ port });

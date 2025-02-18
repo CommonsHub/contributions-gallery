@@ -27,7 +27,7 @@ RUN VITE_PRIMARY_COLOR=${VITE_PRIMARY_COLOR} \
 ENV DISCORD_BOT_TOKEN=""
 
 # Production stage
-FROM denoland/deno:latest
+FROM denoland/deno:2.1.10
 
 WORKDIR /app
 
@@ -39,6 +39,6 @@ COPY server ./server
 # Compile the Deno application
 RUN deno cache server/main.ts
 
-EXPOSE 8000
+EXPOSE 3003
 
 CMD ["deno", "task", "start"] 
