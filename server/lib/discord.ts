@@ -81,6 +81,19 @@ async function processContent(
     }
   }
 
+  // Handle #channel mentions
+  const channelRegex = /<#(\d+)>/g;
+  const channelMatches = output.match(channelRegex);
+
+  if (channelMatches) {
+    for (const match of channelMatches) {
+      const channelId = match.substring(2, match.length - 1);
+      const channel = await fetchChannelName(channelId);
+      output = output.replace(`<#${channelId}>`, `<#${channel}>`);
+      channels.push({ id: channelId, name: channel, url: match });
+    }
+  }
+
   // Handle user mentions
   mentions = mentions.map((mention) => {
     output = output.replace(`<@${mention.id}>`, `<@${mention.username}>`);
@@ -170,7 +183,6 @@ export async function getMessagesFromChannel(
         }
       }
 
-      // console.log(message);
       const avatarUrl = getAvatarUrl(message.author.id, message.author.avatar);
       const { content, mentions, channels } = await processContent(
         message.content,

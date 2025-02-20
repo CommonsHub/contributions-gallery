@@ -104,14 +104,20 @@ const ImageViewer: React.FC = () => {
 
   const handlePrevious = () => {
     if (!posts) return;
-    setIsAutoPlaying(false);
     setCurrentIndex((prev) => (prev - 1 + posts.length) % posts.length);
+    setIsAutoPlaying(false);
+    setTimeout(() => {
+      setIsAutoPlaying(true);
+    }, 10000);
   };
 
   const handleNext = () => {
     if (!posts) return;
-    setIsAutoPlaying(false);
     setCurrentIndex((prev) => (prev + 1) % posts.length);
+    setIsAutoPlaying(false);
+    setTimeout(() => {
+      setIsAutoPlaying(true);
+    }, 10000);
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -240,6 +246,7 @@ const ImageViewer: React.FC = () => {
         timestamp={posts[currentIndex].timestamp}
         reactions={posts[currentIndex].reactions}
         mentions={posts[currentIndex].mentions}
+        channels={posts[currentIndex].channels}
       />
 
       <ImageReel
@@ -247,8 +254,11 @@ const ImageViewer: React.FC = () => {
         posts={posts}
         currentIndex={currentIndex}
         onSelect={(index) => {
-          setIsAutoPlaying(false);
           setCurrentIndex(index);
+          setIsAutoPlaying(false);
+          setTimeout(() => {
+            setIsAutoPlaying(true);
+          }, 10000);
         }}
       />
     </div>

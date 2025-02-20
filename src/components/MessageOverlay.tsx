@@ -20,23 +20,34 @@ const MessageOverlay: React.FC<MessageOverlayProps> = ({
   timestamp,
   reactions,
   mentions,
+  channels,
 }) => {
-  const replaceMentions = (content: string) => {
-    if (!mentions?.length) return content;
+  const replaceTags = (content: string) => {
+    if (!mentions?.length && !channels?.length) return content;
 
-    const parts = content.split(/<@([^>]+)>/g);
+    const parts = content.split(/<(?:#|@)([^>]+)>/g);
+    console.log("replaceTags> parts", parts);
     return parts.map((part, index) => {
-      // Even indices are regular text, odd indices are usernames
+      // Even indices are regular text, odd indices are tags
       if (index % 2 === 0) return part;
 
       const mention = mentions.find((mention) => mention.username === part);
-      return mention ? (
-        <strong key={index} className="font-semibold text-blue-300">
-          {mention.name}
-        </strong>
-      ) : (
-        `<@${part}>`
-      );
+      if (mention) {
+        return (
+          <strong key={index} className="font-semibold text-blue-300">
+            {mention.name}
+          </strong>
+        );
+      }
+      const channel = channels.find((channel) => channel.name === part);
+      if (channel) {
+        return (
+          <strong key={index} className="font-semibold text-blue-300">
+            #{channel.name}
+          </strong>
+        );
+      }
+      return `<@${part}>`;
     });
   };
 
@@ -66,7 +77,7 @@ const MessageOverlay: React.FC<MessageOverlayProps> = ({
                   })}
                 </span>
               </div>
-              <p className="text-gray-200">{replaceMentions(content)}</p>
+              <p className="text-gray-200">{replaceTags(content)}</p>
             </div>
           </div>
 
